@@ -5,7 +5,7 @@ from utils import logger
 
 if __name__ == '__main__':
 
-    with open('files_names.txt', 'r', encoding='utf-8-sig') as file:
+    with open('file_names.txt', 'r', encoding='utf-8-sig') as file:
         files_list: list[str] = [row.strip() for row in file]
 
     with open('true_keywords.txt', 'r', encoding='utf-8-sig') as file:
