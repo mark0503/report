@@ -64,7 +64,6 @@ class RandomUserId(BaseProcessor):
                 if self.max_amount and sum_amount > self.max_count:
                     continue
                 elem['new_user_id'] = elem_from_85['new_user_id']
-                print('удалить запись из большого куска')
                 initial_list_88.remove(elem_from_85)
                 result_list.append(elem)
                 break

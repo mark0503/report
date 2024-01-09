@@ -17,13 +17,14 @@ class ValidateCountProduct:
 
     async def initial_process(self):
         try:
+            logger.success(f'Начинаем читать файл {self.file_name}.')
             self.workbook = openpyxl.load_workbook(self.file_name, data_only=True,
                                                    keep_links=False)
             self.sheet = self.workbook.active
         except Exception as err:
             logger.error(f'Ошибка обработки файла {self.file_name}: {err}')
         else:
-            logger.success(f'Файл {self.file_name} успешно обработан. Кол-во строк: {self.sheet.max_row}')
+            logger.success(f'Файл {self.file_name} успешно прочитан. Кол-во строк: {self.sheet.max_row}')
 
     async def start_validate(self):
         await self.initial_process()
@@ -68,4 +69,6 @@ class ValidateCountProduct:
             self.sheet.cell(row=row, column=self.save_column).value = count
 
     async def save_process(self):
+        logger.success(f'Начинаем сохранять файл {self.file_name}.')
         self.workbook.save(f'{self.file_name.replace(".xlsx", "")}_patch.xlsx')
+        logger.success(f'Файл {self.file_name} успешно сохранен.')
