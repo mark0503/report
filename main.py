@@ -1,6 +1,6 @@
 from multiprocessing.dummy import Pool
 
-from core import start_random_user_id, validate_count_product
+from core import start_random_user_id, validate_count_product, start_set_user_id_for_ex_id
 from utils import logger
 
 if __name__ == '__main__':
@@ -21,6 +21,7 @@ if __name__ == '__main__':
 
     user_action: int = int(input('\n1. Проставление рандомных id\n'
                                  '2. Подсчет кол-ва по ключевым словам\n'
+                                 '3. Связка с внешним id\n'
                                  'Введите ваше действие: '))
 
     match user_action:
@@ -101,3 +102,29 @@ if __name__ == '__main__':
 
             with Pool(processes=threads) as executor:
                 tasks_result: list = executor.map(validate_count_product, formatted_data_list)
+        case 3:
+            ex_id_column: str | None | int = input('\nВведите номер столбца с внешним id:')
+
+            if ex_id_column:
+                description_column = int(ex_id_column)
+            else:
+                raise Exception(f'Конфликт! Номер столбца для импорта с внешним id не указан')
+
+            save_column: str | None | int = int(input('\nВведите номер столбца в который нужно сохранять:'))
+
+            if save_column:
+                save_column = int(save_column)
+            else:
+                raise Exception(f'Конфликт! Номер столбца для сохранения кол-ва не указан')
+
+            formatted_data_list: list = [
+                {
+                    'file_name': report_file,
+                    'save_column': save_column,
+                    'ex_id': ex_id_column
+
+                } for report_file in files_list
+            ]
+
+            with Pool(processes=threads) as executor:
+                tasks_result: list = executor.map(start_set_user_id_for_ex_id, formatted_data_list)

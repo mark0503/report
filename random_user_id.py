@@ -20,7 +20,7 @@ class RandomUserId(BaseProcessor):
     async def start_process(self):
         process_count = 0
         logger.info(f'начинаем преобразовывать данные под свою структуру.')
-        for row in range(2, self.sheet.max_row):
+        for row in range(2, self.sheet.max_row + 1):
             if self.column_amount:
                 product_amount = float(self.sheet.cell(row=row, column=self.column_amount).value)
             else:

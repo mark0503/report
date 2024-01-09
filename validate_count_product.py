@@ -14,9 +14,8 @@ class ValidateCountProduct:
         self.true_keywords_list = source_data['true_keywords_list']
         self.workbook = None
         self.sheet = None
-        self.initial_process()
 
-    def initial_process(self):
+    async def initial_process(self):
         try:
             self.workbook = openpyxl.load_workbook(self.file_name, data_only=True,
                                                    keep_links=False)
@@ -26,13 +25,14 @@ class ValidateCountProduct:
         else:
             logger.success(f'Файл {self.file_name} успешно обработан. Кол-во строк: {self.sheet.max_row}')
 
-    def start_validate(self):
-        self.start_process()
-        self.save_process()
+    async def start_validate(self):
+        await self.initial_process()
+        await self.start_process()
+        await self.save_process()
         return True
 
-    def start_process(self):
-        for row in range(2, self.sheet.max_row):
+    async def start_process(self):
+        for row in range(2, self.sheet.max_row + 1):
             string_input = self.sheet.cell(row=row, column=self.description_column).value
             if not string_input:
                 continue
@@ -67,5 +67,5 @@ class ValidateCountProduct:
                         is_preview_valid = True
             self.sheet.cell(row=row, column=self.save_column).value = count
 
-    def save_process(self):
-        self.workbook.save(f'{self.file_name}_patch.xlsx')
+    async def save_process(self):
+        self.workbook.save(f'{self.file_name.replace(".xlsx", "")}_patch.xlsx')
