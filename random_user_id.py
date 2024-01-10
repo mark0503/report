@@ -57,12 +57,15 @@ class RandomUserId(BaseProcessor):
                 continue
             for _ in range(500):
                 elem_from_85 = random.choice(initial_list_88)
-                sum_amount = elem['product_amount'] + elem_from_85['product_amount']
-                sum_count = elem['product_count'] + elem_from_85['product_count']
-                if self.max_count and sum_count > self.max_count:
-                    continue
-                if self.max_amount and sum_amount > self.max_count:
-                    continue
+
+                if self.max_count:
+                    sum_count = elem['product_count'] + elem_from_85['product_count']
+                    if sum_count > self.max_count:
+                        continue
+                if self.max_amount:
+                    sum_amount = elem['product_amount'] + elem_from_85['product_amount']
+                    if sum_amount > self.max_count:
+                        continue
                 elem['new_user_id'] = elem_from_85['new_user_id']
                 initial_list_88.remove(elem_from_85)
                 result_list.append(elem)
