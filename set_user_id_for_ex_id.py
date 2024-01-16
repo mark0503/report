@@ -16,7 +16,7 @@ class SetUserIdAtExID:
         self.id_type = source_data['id_type']
         self.sheet = None
 
-    async def initial_process(self):
+    def initial_process(self):
         try:
             logger.success(f'Начинаем читать файл {self.file_name}.')
             self.workbook = openpyxl.load_workbook(self.file_name, data_only=True,
@@ -27,14 +27,14 @@ class SetUserIdAtExID:
         else:
             logger.success(f'Файл {self.file_name} успешно прочитан. Кол-во строк: {self.sheet.max_row}')
 
-    async def start_validate(self):
+    def start_validate(self):
         self.user_ex_id_dict = {}
-        await self.initial_process()
-        await self.start_process()
-        await self.save_process()
+        self.initial_process()
+        self.start_process()
+        self.save_process()
         return True
 
-    async def start_process(self):
+    def start_process(self):
         logger.success(f'Начинаем обрабатывать файл {self.file_name}.')
         for row in range(2, self.sheet.max_row + 1):
             user_ex_id = self.sheet.cell(row=row, column=self.ex_id).value
@@ -47,7 +47,7 @@ class SetUserIdAtExID:
 
             self.sheet.cell(row=row, column=self.save_column).value = uuids_user_id
 
-    async def save_process(self):
+    def save_process(self):
         logger.success(f'Начинаем сохранять файл {self.file_name}.')
         self.workbook.save(f'{self.file_name.replace(".xlsx", "")}_patch.xlsx')
         logger.success(f'Файл {self.file_name} успешно сохранен.')

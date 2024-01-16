@@ -1,5 +1,4 @@
 import random
-import uuid
 
 from base import BaseProcessor
 from utils import logger
@@ -8,17 +7,17 @@ from utils.generate_ex_id import generate_id_of_type
 
 class RandomUserId(BaseProcessor):
 
-    async def start_validate(self):
-        await self.initial_process()
-        await self.start_process()
+    def start_validate(self):
+        self.initial_process()
+        self.start_process()
         if self.percent:
-            await self.shuffle_process()
+            self.shuffle_process()
         else:
             self.state['result_list'] = self.state['initial_list']
-        await self.save_process()
+        self.save_process()
         return True
 
-    async def start_process(self):
+    def start_process(self):
         process_count = 0
         logger.info(f'начинаем преобразовывать данные под свою структуру.')
         for row in range(2, self.sheet.max_row + 1):
@@ -41,7 +40,7 @@ class RandomUserId(BaseProcessor):
             })
             process_count += 1
 
-    async def shuffle_process(self):
+    def shuffle_process(self):
         random.shuffle(self.state['initial_list'])
         index_of_percent = int(self.percent / 100 * len(self.state['initial_list']))
 

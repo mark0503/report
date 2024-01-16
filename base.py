@@ -24,7 +24,7 @@ class BaseProcessor:
             'result_list': []
         }
 
-    async def initial_process(self):
+    def initial_process(self):
         logger.info(f'Начинаю читать файл {self.file_name}')
         try:
             self.workbook = openpyxl.load_workbook(self.file_name, data_only=True,
@@ -35,7 +35,7 @@ class BaseProcessor:
         else:
             logger.success(f'Файл {self.file_name} успешно обработан. Кол-во строк: {self.sheet.max_row}')
 
-    async def save_process(self):
+    def save_process(self):
         for element in self.state['result_list']:
             self.sheet.cell(row=element['row'], column=21).value = element['new_user_id']
 
