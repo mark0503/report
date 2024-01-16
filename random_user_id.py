@@ -3,6 +3,7 @@ import uuid
 
 from base import BaseProcessor
 from utils import logger
+from utils.generate_ex_id import generate_id_of_type
 
 
 class RandomUserId(BaseProcessor):
@@ -30,10 +31,7 @@ class RandomUserId(BaseProcessor):
                 product_count = float(self.sheet.cell(row=row, column=self.count_column).value)
             else:
                 product_count = None
-            new_user_id = ''
-            generate_count = 4 if self.need_long_id else 1
-            for _ in range(generate_count):
-                new_user_id += uuid.uuid4().__str__().replace('-', '')
+            new_user_id = generate_id_of_type(self.id_type)
 
             self.state['initial_list'].append({
                 'product_amount': product_amount,

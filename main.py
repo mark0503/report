@@ -2,6 +2,7 @@ from multiprocessing.dummy import Pool
 
 from core import start_random_user_id, validate_count_product, start_set_user_id_for_ex_id
 from utils import logger
+from utils.generate_ex_id import ExIdType
 
 if __name__ == '__main__':
 
@@ -21,7 +22,7 @@ if __name__ == '__main__':
 
     user_action: int = int(input('\n1. Проставление рандомных id\n'
                                  '2. Подсчет кол-ва по ключевым словам\n'
-                                 '3. Связка с внешним id\n'
+                                 '3. Связка с внешним полем\n'
                                  'Введите ваше действие: '))
 
     match user_action:
@@ -56,15 +57,24 @@ if __name__ == '__main__':
 
             percent = int(percent) if percent else None
 
-            need_long_id = input('\nНужен ли длинный id обычно для ТКС используют(опционально),'
-                                 ' если нужен введите "1":')
+            user_id_type: str | None | int = input(
+                "\nВведите тип id(1-обычный id('7cf6962da1fc43f4b2fbe8fc53816190'),"
+                " 2-длинный(в четыре раза длиннее обычного),"
+                " 3-числовой(124125215)):"
+                "!ПО ДЕФОЛТУ БУДЕТ ВЫБРАН ОБЫЧНЫЙ!"
+            )
+            if user_id_type:
+                if not isinstance(user_id_type, ExIdType):
+                    raise Exception(f'Вы ввели неверное значение. Данного значения нет в списке типов')
+            else:
+                user_id_type = '1'
 
             formatted_data_list: list = [
                 {
                     'file_name': report_file,
                     'column_count': column_count,
                     'column_amount': column_amount,
-                    'need_long_id': need_long_id,
+                    'id_type': user_id_type,
                     'percent': percent,
                     'max_count': max_count,
                     'max_amount': max_amount
@@ -103,12 +113,12 @@ if __name__ == '__main__':
             with Pool(processes=threads) as executor:
                 tasks_result: list = executor.map(validate_count_product, formatted_data_list)
         case 3:
-            ex_id_column: str | None | int = input('\nВведите номер столбца с внешним id:')
+            ex_id_column: str | None | int = input('\nВведите номер столбца с внешним идентификатор:')
 
             if ex_id_column:
                 description_column = int(ex_id_column)
             else:
-                raise Exception(f'Конфликт! Номер столбца для импорта с внешним id не указан')
+                raise Exception(f'Конфликт! Номер столбца для импорта с внешним идентификатор не указан')
 
             save_column: str | None | int = int(input('\nВведите номер столбца в который нужно сохранять:'))
 
@@ -117,11 +127,26 @@ if __name__ == '__main__':
             else:
                 raise Exception(f'Конфликт! Номер столбца для сохранения кол-ва не указан')
 
+            user_id_type: str | None = input(
+                "\nВведите тип id(1-обычный id('7cf6962da1fc43f4b2fbe8fc53816190'),"
+                " 2-длинный(в четыре раза длиннее обычного),"
+                " 3-числовой(124125215)):"
+                "!ПО ДЕФОЛТУ БУДЕТ ВЫБРАН ОБЫЧНЫЙ!"
+            )
+            if user_id_type:
+                if not(ExIdType.BASE_ID.value == user_id_type or
+                       ExIdType.LONG_ID.value == user_id_type or
+                       ExIdType.DIGIT_ID.value == user_id_type):
+                    raise Exception(f'Вы ввели неверное значение. Данного значения нет в списке типов')
+            else:
+                user_id_type = '1'
+
             formatted_data_list: list = [
                 {
                     'file_name': report_file,
                     'save_column': save_column,
-                    'ex_id': ex_id_column
+                    'ex_id': ex_id_column,
+                    'id_type': user_id_type
 
                 } for report_file in files_list
             ]

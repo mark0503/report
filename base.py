@@ -15,7 +15,7 @@ class BaseProcessor:
         self.max_count: int = source_data['max_count']
         self.max_amount: int = source_data['max_amount']
         self.column_amount: int = source_data['column_amount']
-        self.need_long_id: bool = source_data['need_long_id']
+        self.id_type: str = source_data['id_type']
         self.file_name: str = source_data['file_name']
         self.workbook = None
         self.sheet = None

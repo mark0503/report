@@ -1,8 +1,7 @@
-import uuid
-
 import openpyxl
 
 from utils import logger
+from utils.generate_ex_id import generate_id_of_type
 
 
 class SetUserIdAtExID:
@@ -12,8 +11,9 @@ class SetUserIdAtExID:
         self.user_ex_id_dict = None
         self.file_name = source_data['file_name']
         self.save_column = source_data['save_column']
-        self.ex_id = source_data['ex_id']
+        self.ex_id = int(source_data['ex_id'])
         self.workbook = None
+        self.id_type = source_data['id_type']
         self.sheet = None
 
     async def initial_process(self):
@@ -37,12 +37,12 @@ class SetUserIdAtExID:
     async def start_process(self):
         logger.success(f'Начинаем обрабатывать файл {self.file_name}.')
         for row in range(2, self.sheet.max_row + 1):
-            user_ex_id = int(self.sheet.cell(row=row, column=5).value)
+            user_ex_id = self.sheet.cell(row=row, column=self.ex_id).value
 
             if self.user_ex_id_dict.get(user_ex_id):
                 uuids_user_id = self.user_ex_id_dict[user_ex_id]
             else:
-                uuids_user_id = uuid.uuid4().__str__().replace('-', '')
+                uuids_user_id = generate_id_of_type(self.id_type)
                 self.user_ex_id_dict[user_ex_id] = uuids_user_id
 
             self.sheet.cell(row=row, column=self.save_column).value = uuids_user_id
